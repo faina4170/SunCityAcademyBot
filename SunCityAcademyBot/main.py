@@ -3,6 +3,8 @@ import telebot
 from telebot import types
 import re
 from dotenv import load_dotenv
+from flask import Flask
+from threading import Thread
 
 # Загружаем переменные окружения из .env файла
 load_dotenv()
@@ -308,6 +310,37 @@ def handle_course_selection(message):
             reply_markup=types.ReplyKeyboardRemove()
         )
 
-if __name__ == '__main__':
-    print("Бот запущен...")
-    bot.polling(none_stop=True)
+
+app = Flask(__name__)
+
+
+# Keep-alive handler
+@app.route('/ping')
+def ping():
+    return "pong"
+
+
+@app.route('/')
+def home():
+    return "Бот работает!"
+
+
+def run_flask():
+    try:
+        # Try to get Replit-specific info (will work only on Replit)
+        repl_slug = os.environ.get('REPL_SLUG', 'not-on-replit')
+        repl_owner = os.environ.get('REPL_OWNER', 'not-on-replit')
+        if repl_slug != 'not-on-replit' and repl_owner != 'not-on-replit':
+            print(f"Публичный URL: https://{repl_slug}.{repl_owner}.replit.dev")
+        else:
+            print("Сервер запущен локально")
+    except Exception as e:
+        print(f"Ошибка при получении информации о Replit: {e}")
+
+    app.run(host='0.0.0.0', port=8080)
+
+
+Thread(target=run_flask).start()
+bot.polling(none_stop=True)
+
+
