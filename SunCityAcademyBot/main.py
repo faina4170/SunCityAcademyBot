@@ -6,10 +6,9 @@ from dotenv import load_dotenv
 from flask import Flask
 from threading import Thread
 
-# Загружаем переменные окружения из .env файла
+
 load_dotenv()
 
-# Инициализация бота с токеном из переменных окружения
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 MANAGER_CHAT_ID = int(os.getenv('MANAGER_CHAT_ID'))
 
@@ -18,7 +17,7 @@ if not BOT_TOKEN or not MANAGER_CHAT_ID:
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# Хранилище данных пользователей
+
 user_data = {}
 
 class User:
@@ -237,7 +236,7 @@ def handle_email(message):
     if '@' in email and '.' in email:
         user_data[user_id].email = email
 
-        # Выбор конкретной программы
+   
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         if user_data[user_id].user_type == 'Для ребёнка':
             programs = [
@@ -252,7 +251,7 @@ def handle_email(message):
                 'Тренировка памяти',
                 'Управление стрессом '
             ]
-        else:  # Для педагогов
+        else: 
             programs = [
                 'Курс повышения квалификации',
                 'Нейропедагогика',
@@ -314,7 +313,7 @@ def handle_course_selection(message):
 app = Flask(__name__)
 
 
-# Keep-alive handler
+
 @app.route('/ping')
 def ping():
     return "pong"
@@ -327,7 +326,6 @@ def home():
 
 def run_flask():
     try:
-        # Try to get Replit-specific info (will work only on Replit)
         repl_slug = os.environ.get('REPL_SLUG', 'not-on-replit')
         repl_owner = os.environ.get('REPL_OWNER', 'not-on-replit')
         if repl_slug != 'not-on-replit' and repl_owner != 'not-on-replit':
